@@ -2,8 +2,8 @@ library(shiny)
 library(shinyWidgets)
 ratio = 10
 
-launch_game = function(heigth=10,length=10,ratio=10){
-  grid = array(sample(c(0,1), size = length*heigth,replace=TRUE,prob=c((100-ratio)/100,ratio/100)),dim=c(length,heigth))
+launch_game = function(height=10,length=10,ratio=10){
+  grid = array(sample(c(0,1), size = length*height,replace=TRUE,prob=c((100-ratio)/100,ratio/100)),dim=c(length,height))
   ui = fluidpage()
   server = function(input,output){}
   game = shinyApp(ui,server)
