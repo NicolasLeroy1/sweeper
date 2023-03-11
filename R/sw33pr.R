@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyWidgets)
 ratio = 10
 
 launch_game = function(heigth=10,length=10,ratio=10){
@@ -13,9 +14,16 @@ launch_game = function(heigth=10,length=10,ratio=10){
 
 config = shinyApp(
   ui = fluidPage(
-    titlePanel("Sw33pr : Configuration"),
-    mainPanel(sliderInput("length","choose a length",10,40,20),
-              sliderInput("heigth","choose a heigth",10,40,20),
-              sliderInput("ratio","choose a mine-ratio",5,50,10))),
+  setBackgroundColor(
+    color = c("#b4d3b2", "#FFFFFF"),
+    gradient = "linear",
+    direction = "bottom"
+  ),
+  titlePanel("Sw33pr: Configuration"),
+  mainPanel(sliderInput("length","Choose a length",10,40,20),
+            sliderInput("heigth","Choose a height",10,40,20),
+            sliderInput("ratio","Choose a mine-ratio",5,50,10),
+            selectInput("DifficultyLevel","Difficulty",
+                        choices = c("Beginner", "Intermediate", "Expert")))),
   server = function(input, output){}
   )
