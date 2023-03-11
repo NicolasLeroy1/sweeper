@@ -14,11 +14,7 @@ launch_game = function(height=10,length=10,ratio=10){
 ui = navbarPage("MineSw33per",
     actionButton(
       inputId = "start_button",
-      label = "Start game!"
-    ),
-    textOutput(
-      outputId = "grid",
-      placeholder = TRUE
+      label = "Play game!"
     ),
     setBackgroundColor(
     color = c("#b4d3b2", "#FFFFFF"),
@@ -29,17 +25,23 @@ ui = navbarPage("MineSw33per",
                tabPanel("Beginner"),
                tabPanel("Intermediate"),
                tabPanel("Expert")),
-    mainPanel(sliderInput("length","Length: ",10,40,20),
-              sliderInput("height","Height: ",10,40,20),
-              sliderInput("ratio","Choose a mine-ratio",5,50,10)))
-server = function(input, output){
+    sidebarPanel(numericInput("length","Length: ",value = 50),
+              numericInput("height","Height: ", value=50),
+              numericInput("ratio","Choose a mine-ratio",value=49)),
+    mainPanel(dataTableOutput(
+      outputId = "grid"),
+      ))
+server = function(input, output,session){
     start_game <- eventReactive({
       input$start_button
     },
     {
       firstGrid(length,height,ratio)
     })
+    
+    output$grid <- renderDataTable(
+      start_game()
+    )
   }
-
 
 shinyApp(ui, server)

@@ -51,6 +51,5 @@ firstGrid <- function(w, l, nbofMines){
       }
     }
   }
-  gameGrid
+  as.data.frame(gameGrid)
 }
-
