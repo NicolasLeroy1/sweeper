@@ -38,20 +38,19 @@ getNeighbors <- function(i, j, rows, cols){
 
 #randomly places mines with corresponding number around the mine
 firstGrid <- function(w, l, nbofMines){
-  grid <- matrix(data = 0, nrow = l, ncol = w)
-  randomMines <- sample(nrow(grid)*ncol(grid), runif(1,min=1,max=nbofMines))
-  grid[randomMines] <- -1
+  gameGrid <- matrix(data = 0, nrow = l, ncol = w)
+  randomMines <- sample(nrow(gameGrid)*ncol(gameGrid), runif(1,min=1,max=nbofMines))
+  gameGrid[randomMines] <- -1
   for (i in 1:l){
     for (j in 1:w){
-      if (isTRUE(grid[i,j] == -1)) {
+      if (isTRUE(gameGrid[i,j] == -1)) {
         neighbors <- getNeighbors(i,j,l,w)
-      }
-      for (k in neighbors){
-        grid[k[1],k[2]] <- 1
+        for (k in neighbors){
+          gameGrid[k[1],k[2]] <- gameGrid[k[1],k[2]]+1
+        }
       }
     }
   }
-  grid
+  gameGrid
 }
-
 
