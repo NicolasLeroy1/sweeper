@@ -11,19 +11,35 @@ launch_game = function(height=10,length=10,ratio=10){
 }
 
 
-
-config = shinyApp(
-  ui = fluidPage(
-  setBackgroundColor(
+ui = navbarPage("MineSw33per",
+    actionButton(
+      inputId = "start_button",
+      label = "Start game!"
+    ),
+    textOutput(
+      outputId = "grid",
+      placeholder = TRUE
+    ),
+    setBackgroundColor(
     color = c("#b4d3b2", "#FFFFFF"),
     gradient = "linear",
     direction = "bottom"
-  ),
-  titlePanel("Sw33pr: Configuration"),
-  mainPanel(sliderInput("length","Choose a length",10,40,20),
-            sliderInput("heigth","Choose a height",10,40,20),
-            sliderInput("ratio","Choose a mine-ratio",5,50,10),
-            selectInput("DifficultyLevel","Difficulty",
-                        choices = c("Beginner", "Intermediate", "Expert")))),
-  server = function(input, output){}
-  )
+    ),
+    navbarMenu("Difficulty",
+               tabPanel("Beginner"),
+               tabPanel("Intermediate"),
+               tabPanel("Expert")),
+    mainPanel(sliderInput("length","Length: ",10,40,20),
+              sliderInput("height","Height: ",10,40,20),
+              sliderInput("ratio","Choose a mine-ratio",5,50,10)))
+server = function(input, output){
+    start_game <- eventReactive({
+      input$start_button
+    },
+    {
+      firstGrid(length,height,ratio)
+    })
+  }
+
+
+shinyApp(ui, server)
