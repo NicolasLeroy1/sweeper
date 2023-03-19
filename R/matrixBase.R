@@ -37,10 +37,14 @@ getNeighbors <- function(i, j, rows, cols){
 }
 
 #randomly places mines with corresponding number around the mine
-firstGrid <- function(w, l, nbofMines){
-  gameGrid <- matrix(data = 0, nrow = l, ncol = w)
-  randomMines <- sample(nrow(gameGrid)*ncol(gameGrid), runif(1,min=1,max=nbofMines))
-  gameGrid[randomMines] <- -1
+baseGrid <- function(w, l, nbofMines){
+  
+  mines = rep(TRUE, nbofMines)
+  empty = rep(FALSE, w * l - nbofMines)
+  randomMines = sample(c(nbofMines, empty))
+  
+  gameGrid = matrix(randomMines, nrow=w, ncol=l)
+  
   for (i in 1:l){
     for (j in 1:w){
       if (isTRUE(gameGrid[i,j] == -1)) {
@@ -53,3 +57,72 @@ firstGrid <- function(w, l, nbofMines){
   }
   as.data.frame(gameGrid)
 }
+
+hiddenGrid <- function(l, w) {
+  matrix(rep(FALSE, l * w), nrow=l, ncol=w)
+}
+
+playedGrid <- function(l, w) {
+  matrix(rep(FALSE, l * w), nrow=l, ncol=w)
+}
+
+initialGrid <- function(grid) {
+  list(
+    hidden = hiddenGrid(ncol=grid$w, nrow=grid$l),
+    played = playedGrid(ncol=grid$w, nrow=grid$l)
+  )
+}
+
+addFlag <- function(state, i, j) {
+  state$hidden[i, j] = TRUE
+  state
+}
+
+playerTurn <- function(grid, state, i, j) {
+  # since R doesn't allow to pass arguments by reference we can't use the
+  # straightforward recursive algorithm because of memory usage issues
+  remaining_coords = as.stack(c(i, j))
+  
+  while (length(remainingCoords) > 0) {
+    coords = pop(remainingCoords)
+    
+    i = coords[1]
+    j = coords[2]
+    
+    if (state$played[i, j]) {
+      next
+    }
+    
+    state$played[i, j] = TRUE
+    
+    if (game$neighbors[i, j] == 0) {
+      apply(
+        nearbyCoords(i, j, nrow=grid$l, ncol=grid$w),
+        1,
+        function(coords) {
+          i = coords[1]
+          j = coords[2]
+          
+          if (!state$played[i, j]) {
+            push(remainingCoords, c(i, j))
+          }
+        }
+      )
+    }
+  }
+  
+  state
+}
+
+gameStatus <- function(grid, state) {
+  if (any(grid$mines & state$played)) {
+    return("defeat")
+  }
+  
+  if (all(xor(grid$mines, state$played))) {
+    return("victory")
+  }
+  
+  "ongoing"
+}
+
