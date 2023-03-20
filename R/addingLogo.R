@@ -62,6 +62,19 @@ mineSweeperUI = function(rows,cols,state) {
   tags$tr(do.call(tagList,board))
 }
 
+clickHandler = function(rows,cols){
+  for(r in 1:rows){
+    for(c in 1:cols){
+      cellid=paste("cellr",r,"c",c)
+      observeEvent(input[cellid],{
+
+      }
+
+      )
+    }
+  }
+}
+
 #TEST
 #rows=10
 #cols=10
@@ -70,3 +83,4 @@ mineSweeperUI = function(rows,cols,state) {
 
 
 
+!
