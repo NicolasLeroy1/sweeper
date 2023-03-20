@@ -11,9 +11,9 @@ hiddenSquareUI <- function(i, j) {
   )
 }
 
-openedSquareUI <- function(i, j) {
+openedSquareUI <- function(i, j, n) {
   tags$image(
-    href = sprintf("logo/icons8-data-grid-24 (1).png", "played"),
+    href = sprintf(paste0("logo/icons8-",n,"-24.png"), "played"),
     class = "playedSquare",
     x = j,
     y = i,
@@ -42,4 +42,16 @@ mineLogoUI <- function(i, j) {
     width = 1,
     height = 1
   )
+}
+
+
+mineSweeperUI = function(rows,cols,state) {
+  table = lapply(1:rows, function(r){
+     row = lapply(1:cols, function(c){
+       if (state$hidden[r,c]){hiddenSquareUI(r,c)}
+       else if(state$gameGrid[r,c]==-1){mineLogoUI(r,c)}
+       else {openedSquareUI(r,c,state$gameGrid[r,c])}
+    })
+     tags$tr(do.call())
+  })
 }
