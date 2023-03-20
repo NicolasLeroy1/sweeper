@@ -46,12 +46,27 @@ mineLogoUI <- function(i, j) {
 
 
 mineSweeperUI = function(rows,cols,state) {
-  table = lapply(1:rows, function(r){
-     row = lapply(1:cols, function(c){
+  board = lapply(1:rows, function(r){
+     gridrow = lapply(1:cols, function(c){tags$td({
        if (state$hidden[r,c]){hiddenSquareUI(r,c)}
        else if(state$gameGrid[r,c]==-1){mineLogoUI(r,c)}
        else {openedSquareUI(r,c,state$gameGrid[r,c])}
-    })
-     tags$tr(do.call())
+       },
+       id=paste0("cellr",r,"c",c),
+       class="cell",
+       onclick = paste0("Shiny.setInputValue(cellr",r,"c",c,", TRUE)")
+       )
+      })
+     tags$tr(do.call(tagList,gridrow))
   })
+  tags$tr(do.call(tagList,board))
 }
+
+#TEST
+#rows=10
+#cols=10
+#state=list(hidden=matrix(TRUE,rows*cols,ncol=cols),gameGrid=matrix(FALSE,rows*cols,ncol=cols))
+#mineSweeperUI(2,2,state)
+
+
+
