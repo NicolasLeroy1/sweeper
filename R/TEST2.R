@@ -91,7 +91,7 @@ server = function(input,output,session){
     else{output$mytext=renderText("Yeeaaeaeeaeeaae gogogogogo !")}
   })
   # Clicks handling
-observe({
+  reactive({
   for(r in 1:gameState$nrows){
     for(c in 1:gameState$ncols){
       observeEvent(input[[paste0("r",r,"c",c)]],{
@@ -106,9 +106,6 @@ observe({
     }
   }
 })
-
-
-
 }
 
 shinyApp(ui,server)
