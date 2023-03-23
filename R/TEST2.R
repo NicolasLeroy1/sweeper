@@ -58,7 +58,7 @@ server = function(input,output,session){
     gameState$board = generateBoard(ncols=gameState$ncols,nrows=gameState$nrows,nmines=gameState$nmines)
     gameState$opened = matrix(FALSE,ncol=gameState$ncols,nrow=gameState$nrows)
     gameState$flags = matrix(FALSE,ncol=gameState$ncols,nrow=gameState$nrows)
-    gameOver = FALSE
+    gameState$gameOver = FALSE
     gameState$success = FALSE
 
     #Creating the buttons list
@@ -78,13 +78,17 @@ server = function(input,output,session){
       }
     }
   })
-  #boardUI rendering using nrows and ncols
+  # boardUI rendering using nrows and ncols
   output$boardUI = renderUI({
+    tags$style({
+
+    })
     grid = lapply(1:(gameState$nrows), function(r){
       gridrow = lapply(1:(gameState$ncols), function(c){
         actionButton(paste0("r",r,"c",c),
                      if(gameState$opened[r,c]==FALSE){"_"}
                      else if(gameState$flags[r,c]){"f"}
+                     else if(gameState$board[r,c]==-1){"X"}
                      else{paste0(gameState$board[r,c])}
         )
       })
@@ -108,7 +112,6 @@ server = function(input,output,session){
     if(gameState$success){output$mytext=renderText("U won , start again with moooore mines!")}
     else{output$mytext=renderText("Yeeaaeaeeaeeaae gogogogogo !")}
   })
-
 }
 shinyApp(ui,server)
 
