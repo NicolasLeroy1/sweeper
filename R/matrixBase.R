@@ -79,8 +79,6 @@ addFlag <- function(state, i, j) {
 }
 
 playerTurn <- function(grid, state, i, j) {
-  # since R doesn't allow to pass arguments by reference we can't use the
-  # straightforward recursive algorithm because of memory usage issues
   remaining_coords = as.stack(c(i, j))
   
   while (length(remainingCoords) > 0) {
@@ -95,7 +93,7 @@ playerTurn <- function(grid, state, i, j) {
     
     state$played[i, j] = TRUE
     
-    if (game$neighbors[i, j] == 0) {
+    if (grid$neighbors[i, j] == 0) {
       apply(
         nearbyCoords(i, j, nrow=grid$l, ncol=grid$w),
         1,

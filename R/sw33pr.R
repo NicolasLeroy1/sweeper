@@ -1,11 +1,16 @@
 library(shiny)
 library(shinyWidgets)
 
+launch_game = function(height=10,length=10,ratio=10){
+  grid = array(sample(c(0,1), size = length*height,replace=TRUE,prob=c((100-ratio)/100,ratio/100)),dim=c(length,height))
+  ui = fluidpage()
+  server = function(input,output){}
+  game = shinyApp(ui,server)
+  runApp(game)
+}
+
+
 ui = navbarPage("MineSw33per",
-    actionButton(
-      inputId = "start_button",
-      label = "Play game!"
-    ),
     setBackgroundColor(
     color = c("#b4d3b2", "#FFFFFF"),
     gradient = "linear",
@@ -42,29 +47,30 @@ server = function(input, output, session){
       updateNumericInput(session, inputId, val = val)
       val
     }
-
+    
     reactiveNrow(
       enforceLimit(session, "height", input$height, 1, 50, 10)
     )
-
+    
     reactiveNcol(
       enforceLimit(session, "width", input$width, 1, 50, 10)
     )
 
     maxMines = reactiveL() * reactiveW() - 1
     reactiveNbMines(
-      enforceLimit(session, "ratio", input$ratio, 1, maxMines, 14)
+      enforceLimit(session, "ratio", input$ratio, 1, maxMines, 10)
     )
   })
 
 minesweeperServer(
   "MineSweeper",
-  reactive(input$firstGrid),
-  reactiveNrow = reactiveL,
-  reactiveNcol = reactiveW,
-  reactiveNmines = reactiveNbMines
+  reactive(input$game_grid),
+  reactiveL = reactiveL,
+  reactiveW = reactiveW,
+  reactiveNbMines = reactiveNbMines
 )
 }
 
 shinyApp(ui, server)
+
 
