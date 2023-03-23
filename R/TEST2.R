@@ -51,6 +51,7 @@ server = function(input,output,session){
   )}
   # StartButton handling
   observeEvent(input$start,{
+    #Reset gameState
     gameState$ncols = input$ncols
     gameState$nrows = input$nrows
     gameState$nmines = input$nmines
@@ -59,6 +60,23 @@ server = function(input,output,session){
     gameState$flags = matrix(FALSE,ncol=gameState$ncols,nrow=gameState$nrows)
     gameOver = FALSE
     gameState$success = FALSE
+
+    #Creating the buttons list
+    button_id = matrix(FALSE,gameState$nrows,gameState$ncols)
+    for(r in 1:gameState$nrows){
+      for(c in 1:gameState$ncols){
+        button_id[r,c]=paste0("r",r,"c",c)
+        observeEvent(button_id[r,c],{
+          if(gameState$flags[r,c]==TRUE){}
+          else if(gameState$opened[r,c]==TRUE){}
+          else if(gameState$board[r,c]==-1){
+            gameState$opened[r,c]=TRUE
+            gameState$gameOver = TRUE
+          }
+          else {gameState$opened[r,c]=TRUE}
+        })
+      }
+    }
   })
   #boardUI rendering using nrows and ncols
   output$boardUI = renderUI({
@@ -82,31 +100,15 @@ server = function(input,output,session){
   output$mytext=renderText("try your luck")
   # gameOver handling
   observeEvent(gameState$gameOver,{
-    if(gameState$gameOver){output$mytext=renderText(tags$text("U lost !!"))}
-    else{output$mytext = renderText(tags$text("go gogogo !"))}
+    if(gameState$gameOver){output$mytext=renderText("U lost !!")}
+    else{output$mytext = renderText("go gogogo !")}
   })
   # Success handling
   observeEvent(gameState$success,{
     if(gameState$success){output$mytext=renderText("U won , start again with moooore mines!")}
     else{output$mytext=renderText("Yeeaaeaeeaeeaae gogogogogo !")}
   })
-  # Clicks handling
-  reactive({
-  for(r in 1:gameState$nrows){
-    for(c in 1:gameState$ncols){
-      observeEvent(input[[paste0("r",r,"c",c)]],{
-        if(gameState$flags[r,c]==TRUE){}
-        else if(gameState$opened[r,c]==TRUE){}
-        else if(gameState$board[r,c]==-1){
-          gameState$opened[r,c]=TRUE
-          gameState$gameOver = TRUE
-        }
-        else {gameState$opened[r,c]=TRUE}
-      })
-    }
-  }
-})
-}
 
+}
 shinyApp(ui,server)
 
