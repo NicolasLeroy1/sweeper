@@ -1,12 +1,11 @@
 Package: sweeper
-Title: What the Package Does (One Line, Title Case)
+Title: Minesweeper in with R Shiny
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    c(person("Nicolas", "Leroy",email="nicolas.leroy@etu.umontpellier.fr", role = c("aut","cre")),
+    person("Rim", "Hajal", role = "aut"))
+Description: This package includes a function which creates a Minesweeper game using the Shiny web framework
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
