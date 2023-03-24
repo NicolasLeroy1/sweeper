@@ -2,6 +2,10 @@
 
 sweeper is a R package that allows you to generate a fully functional Shiny application for the classic Minesweeper game. The package is designed to be interactive and customizable, offering reactive options for grid size and mine density .
 
+## Authors/creator
+
+Rim Hajal
+Nicolas Leroy
 
 ## Installation
 
