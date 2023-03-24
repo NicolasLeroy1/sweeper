@@ -5,6 +5,7 @@ sweeper is a R package that allows you to generate a fully functional Shiny appl
 ## Authors/creator
 
 Rim Hajal
+
 Nicolas Leroy
 
 ## Installation
