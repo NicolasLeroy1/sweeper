@@ -5,7 +5,7 @@ sweeper is a R package that allows you to generate a fully functional Shiny appl
 
 ## Installation
 
-To install sweeper from GitHub, run:
+To install sweeper from GitHub, run in R:
 
 ```R
 
@@ -17,7 +17,7 @@ devtools::install_github("NicolasLeroy1/sweeper")
 
 ## Usage
 
-To launch the app, run following script :
+To launch the app, run following script in R :
 
 ```R
 library(sweeper)
