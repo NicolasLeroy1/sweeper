@@ -50,10 +50,13 @@ ui=fluidPage(
   "))),
   sidebarLayout(
     sidebarPanel(
-      tags$audio(src="www/Chill_afternoon.mp3",type="audio/mp3",controls=TRUE),
+      tags$audio(src="Chill_afternoon.mp3",type="audio/mp3",controls=TRUE),
       sliderInput("ncols","Number of columns",5,20,10),
       sliderInput("nrows","Number of rows",5,20,10),
       sliderInput("nmines","Number of mines",1,100,10),
+      radioButtons("flagbox", label ="Select action : ",
+                   choices = list("Open" = 1, "Flag" = 2),
+                   selected = 1),
       actionButton("start","Start")
     ),
     mainPanel(
@@ -100,7 +103,11 @@ server = function(input,output,session){
       observeEvent(input[[id]],ignoreInit = TRUE,{
         r = as.integer(unlist(strsplit(x=id,split="[[:alpha:]]")))[2]
         c = as.integer(unlist(strsplit(x=id,split="[[:alpha:]]")))[3]
-        openCell(r,c,gameState)
+        if(input$flagbox==1){openCell(r,c,gameState)}
+        else{
+          if(gameState$flags[r,c]){gameState$flags[r,c]=FALSE}
+          else{gameState$flags[r,c]=TRUE}
+        }
       })
     })
   })
@@ -110,9 +117,11 @@ server = function(input,output,session){
       gridrow = lapply(1:(gameState$ncols), function(c){
         tags$td({
           actionButton(paste0("r",r,"c",c),
-                       if(gameState$opened[r,c]==FALSE){"_"}
-                       else if(gameState$flags[r,c]){"f"}
-                       else if(gameState$board[r,c]==-1){"X"}
+                       if(gameState$opened[r,c]==FALSE){
+                         if(gameState$flags[r,c]){icon("flag")}
+                         else{icon("square")}
+                       }
+                       else if(gameState$board[r,c]==-1){icon("bomb")}
                        else{paste0(gameState$board[r,c])}
           )
         })
