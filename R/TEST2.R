@@ -61,22 +61,28 @@ server = function(input,output,session){
     gameState$gameOver = FALSE
     gameState$success = FALSE
 
-    #Creating the buttons list
+    #Creating the buttons ids
     button_id = matrix(FALSE,gameState$nrows,gameState$ncols)
     for(r in 1:gameState$nrows){
       for(c in 1:gameState$ncols){
         button_id[r,c]=paste0("r",r,"c",c)
-        observeEvent(button_id[r,c],{
-          if(gameState$flags[r,c]==TRUE){}
-          else if(gameState$opened[r,c]==TRUE){}
-          else if(gameState$board[r,c]==-1){
-            gameState$opened[r,c]=TRUE
-            gameState$gameOver = TRUE
-          }
-          else {gameState$opened[r,c]=TRUE}
-        })
+
       }
     }
+    #Creating
+    lapply(button_id,function(id){
+      observeEvent(input[[id]],{
+        r = as.integer(unlist(strsplit(x=id,split="[[:alpha:]]")))[2]
+        c = as.integer(unlist(strsplit(x=id,split="[[:alpha:]]")))[3]
+        if(gameState$flags[r,c]==TRUE){}
+        else if(gameState$opened[r,c]==TRUE){}
+        else if(gameState$board[r,c]==-1){
+          gameState$opened[r,c]=TRUE
+          gameState$gameOver = TRUE
+        }
+        else {gameState$opened[r,c]=TRUE}
+      })
+    })
   })
   # boardUI rendering using nrows and ncols
   output$boardUI = renderUI({
