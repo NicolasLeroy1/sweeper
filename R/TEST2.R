@@ -1,5 +1,19 @@
 library(shiny)
 
+# Flood open adjacent cells
+openCell <- function(r, c, gameState) {
+  if(gameState$opened[r,c]==TRUE){return(gameState)}
+  gameState$opened[r,c]=TRUE
+  if(gameState$board[r,c]==-1){gameState$gameOver=TRUE}
+  if(gameState$board[r,c]==0){
+    for(i in max(r-1,1):min(r+1,gameState$nrows)){
+      for(j in max(c-1,1):min(c+1,gameState$ncols)){
+        openCell(i,j,gameState)
+      }
+    }
+  }
+  return(gameState)
+}
 # Generate a matrix of a minesweeper grid
 generateBoard = function(nrows, ncols, nmines) {
   # Create empty board
@@ -23,8 +37,20 @@ generateBoard = function(nrows, ncols, nmines) {
 
 
 ui=fluidPage(
+  tags$head(tags$style(HTML("
+  table {
+        width: 30%;
+        border-collapse: collapse;
+        background-color=black
+      }
+      td {
+        padding: 0px;
+        text-align: center;
+      }
+  "))),
   sidebarLayout(
     sidebarPanel(
+      tags$audio(src="www/Chill_afternoon.mp3",type="audio/mp3",controls=TRUE),
       sliderInput("ncols","Number of columns",5,20,10),
       sliderInput("nrows","Number of rows",5,20,10),
       sliderInput("nmines","Number of mines",1,100,10),
@@ -50,7 +76,7 @@ server = function(input,output,session){
     flags= matrix(FALSE,ncol=10,nrow=10)
   )}
   # StartButton handling
-  observeEvent(input$start,{
+  observeEvent(input$start,ignoreNULL = FALSE,{
     #Reset gameState
     gameState$ncols = input$ncols
     gameState$nrows = input$nrows
@@ -71,32 +97,25 @@ server = function(input,output,session){
     }
     #Creating
     lapply(button_id,function(id){
-      observeEvent(input[[id]],{
+      observeEvent(input[[id]],ignoreInit = TRUE,{
         r = as.integer(unlist(strsplit(x=id,split="[[:alpha:]]")))[2]
         c = as.integer(unlist(strsplit(x=id,split="[[:alpha:]]")))[3]
-        if(gameState$flags[r,c]==TRUE){}
-        else if(gameState$opened[r,c]==TRUE){}
-        else if(gameState$board[r,c]==-1){
-          gameState$opened[r,c]=TRUE
-          gameState$gameOver = TRUE
-        }
-        else {gameState$opened[r,c]=TRUE}
+        openCell(r,c,gameState)
       })
     })
   })
   # boardUI rendering using nrows and ncols
   output$boardUI = renderUI({
-    tags$style({
-
-    })
     grid = lapply(1:(gameState$nrows), function(r){
       gridrow = lapply(1:(gameState$ncols), function(c){
-        actionButton(paste0("r",r,"c",c),
-                     if(gameState$opened[r,c]==FALSE){"_"}
-                     else if(gameState$flags[r,c]){"f"}
-                     else if(gameState$board[r,c]==-1){"X"}
-                     else{paste0(gameState$board[r,c])}
-        )
+        tags$td({
+          actionButton(paste0("r",r,"c",c),
+                       if(gameState$opened[r,c]==FALSE){"_"}
+                       else if(gameState$flags[r,c]){"f"}
+                       else if(gameState$board[r,c]==-1){"X"}
+                       else{paste0(gameState$board[r,c])}
+          )
+        })
       })
       tags$tr(tagList(gridrow))
     })
@@ -107,16 +126,18 @@ server = function(input,output,session){
     if((sum(gameState$opened&(gameState$board!=-1)))==(gameState$ncols*gameState$nrows-gameState$nmines)){gameState$success=TRUE}
   })
   # mytext initialization
-  output$mytext=renderText("try your luck")
+  output$mytext=renderText("TRY YOUR LUCK !")
   # gameOver handling
-  observeEvent(gameState$gameOver,{
-    if(gameState$gameOver){output$mytext=renderText("U lost !!")}
-    else{output$mytext = renderText("go gogogo !")}
+  observeEvent(gameState$gameOver,ignoreInit = TRUE,{
+    if(gameState$gameOver){output$mytext=renderText("!!!! YOU LOST !!!! SAD")}
+    else{output$mytext = renderText("YEA ! START AGAIN !!!")}
   })
   # Success handling
-  observeEvent(gameState$success,{
-    if(gameState$success){output$mytext=renderText("U won , start again with moooore mines!")}
-    else{output$mytext=renderText("Yeeaaeaeeaeeaae gogogogogo !")}
+  observeEvent(gameState$success,ignoreInit = TRUE,{
+    if(gameState$success){output$mytext=renderText("YOU WON WITH EASE AND STYLE !!!
+                                                   START AGAIN NOW !
+                                                   YEA !")}
+    else{output$mytext=renderText("GOOD LUCK AGAIN!")}
   })
 }
 shinyApp(ui,server)
